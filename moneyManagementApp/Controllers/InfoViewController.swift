@@ -1,18 +1,10 @@
-//
-//  InfoViewController.swift
-//  moneyManagementApp
-//
-//  Created by Ayşe Hotaman on 3.07.2022.
-//
-
 import UIKit
-import CoreData
 
 class InfoViewController: UIViewController {
     
     @IBOutlet weak var emailLabel: UILabel!
     @IBOutlet weak var passwordLabel: UILabel!
-     // This is equal to the email and password in the previous page
+    
     var userEmail: String = ""
     var userPassword: String = ""
     
@@ -22,11 +14,17 @@ class InfoViewController: UIViewController {
         emailLabel.text! = userEmail
         passwordLabel.text! = userPassword
         
-    }
-    // Perform segue to home
-    @IBAction func okButton(_ sender: Any) {
+        // Create a button
+        let backButton = UIButton(type: .system)
+        backButton.setTitle("Back to Login", for: .normal)
+        backButton.addTarget(self, action: #selector(backToLogin), for: .touchUpInside)
         
-        performSegue(withIdentifier: "toLoginVC", sender: nil)
+        // Set button frame and add to view
+        backButton.frame = CGRect(x: 20, y: 120, width: 200, height: 40)
+        view.addSubview(backButton)
     }
     
+    @objc func backToLogin() {
+        performSegue(withIdentifier: "toLoginVC", sender: nil)
+    }
 }

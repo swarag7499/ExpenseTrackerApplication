@@ -125,11 +125,11 @@ class SignUpViewController: UIViewController, UIImagePickerControllerDelegate & 
         
         let randomInt = Int.random(in: 0..<100)
         // add random numbers to the end of given username
-        return "\(usernameTextField.text!)\(randomInt)@gmail.com"
+        return "\(usernameTextField.text!)@gmail.com"
     }
     
     func createPassword() -> String {
-        let letters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+        let letters = "0123456789"
         return String((0..<6).map{ _ in letters.randomElement()! })
     }
     
