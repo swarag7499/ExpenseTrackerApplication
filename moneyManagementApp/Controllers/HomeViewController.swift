@@ -12,7 +12,7 @@ class HomeViewController: UIViewController {
     var categoryArray = [String]()
     var amountArray = [Float]()
     var expanseArray = [String]()
-    var idArray = [String]()
+    var idArray = [String?]()
     var expenseAmount = [Float]()
     var incomeAmount = [Float]()
     
@@ -48,7 +48,63 @@ class HomeViewController: UIViewController {
         
         sumOfExpense()
         sumOfIncome()
+        
+        // Add long press gesture recognizer
+        let longPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(handleLongPress(_:)))
+        transactionTableView.addGestureRecognizer(longPressGesture)
     }
+    
+    @objc func handleLongPress(_ gestureRecognizer: UILongPressGestureRecognizer) {
+        if gestureRecognizer.state == .began {
+            let touchPoint = gestureRecognizer.location(in: transactionTableView)
+            if let indexPath = transactionTableView.indexPathForRow(at: touchPoint) {
+                // Display alert for confirmation
+                let alert = UIAlertController(title: "Confirm Deletion", message: "Are you sure you want to delete this transaction?", preferredStyle: .alert)
+                alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+                alert.addAction(UIAlertAction(title: "Delete", style: .destructive, handler: { _ in
+                    self.deleteTransaction(at: indexPath)
+                }))
+                present(alert, animated: true, completion: nil)
+            }
+        }
+    }
+    
+    func deleteTransaction(at indexPath: IndexPath) {
+        guard let id = idArray[indexPath.row] else { return }
+        
+        let appDelegate = UIApplication.shared.delegate as! AppDelegate
+        let context = appDelegate.persistentContainer.viewContext
+        
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Transaction")
+        fetchRequest.predicate = NSPredicate(format: "transactionid = %@", id)
+        
+        do {
+            let results = try context.fetch(fetchRequest)
+            if let objectToDelete = results.first as? NSManagedObject {
+                context.delete(objectToDelete)
+                
+                // Update data arrays
+                idArray.remove(at: indexPath.row)
+                categoryArray.remove(at: indexPath.row)
+                amountArray.remove(at: indexPath.row)
+                expanseArray.remove(at: indexPath.row)
+                
+                // Reload table view
+                transactionTableView.reloadData()
+                
+                // Update expense and income labels
+                sumOfExpense()
+                sumOfIncome()
+                
+                // Update balance label
+                let balance = sumOfIncomes - sumOfExpenses
+                balanceLabel.text = "\(balance) $"
+            }
+        } catch {
+            print("Error deleting transaction: \(error)")
+        }
+    }
+
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "toDetailsVC" {
@@ -178,22 +234,22 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource {
         
         if expanseArray[indexPath.row] == "expense" {
             cell.amountLabel.textColor = UIColor.systemRed
-            cell.amountLabel.text = "-\(amountArray[indexPath.row]) ₺"
+            cell.amountLabel.text = "-\(amountArray[indexPath.row]) $"
             
             sumOfExpenses = expenseAmount.reduce(0, {$0 + $1})
-            expenseLabel.text = "-\(sumOfExpenses) ₺"
+            expenseLabel.text = "-\(sumOfExpenses) $"
             
             
         } else {
             cell.amountLabel.textColor = UIColor.systemGreen
-            cell.amountLabel.text = "+\(amountArray[indexPath.row]) ₺"
+            cell.amountLabel.text = "+\(amountArray[indexPath.row]) $"
             
             sumOfIncomes = incomeAmount.reduce(0, {$0 + $1})
-            incomeLabel.text = "+\(sumOfIncomes) ₺"
+            incomeLabel.text = "+\(sumOfIncomes) $"
            
         }
         
-        balanceLabel.text = "\(sumOfIncomes - sumOfExpenses) ₺"
+        balanceLabel.text = "\(sumOfIncomes - sumOfExpenses) $"
         
         return cell
     }
@@ -201,7 +257,7 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource {
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
-        selectedTransactionId = idArray[indexPath.row]
+        selectedTransactionId = idArray[indexPath.row] ?? ""
         
         performSegue(withIdentifier: "toDetailsVC", sender: nil)
     }

@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		548867A52BD4515B00E7DA69 /* GraphView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 548867A42BD4515B00E7DA69 /* GraphView.swift */; };
+		54EABC9C2BCE40F700C56DD0 /* GraphViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54EABC9B2BCE40F700C56DD0 /* GraphViewController.swift */; };
 		5A4BD76128741AA0009FA271 /* DetailsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A4BD76028741AA0009FA271 /* DetailsViewController.swift */; };
 		5A9E218728759CEA00A7ABFC /* TransactionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A9E218528759CEA00A7ABFC /* TransactionViewCell.swift */; };
 		5A9E218828759CEA00A7ABFC /* TransactionViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5A9E218628759CEA00A7ABFC /* TransactionViewCell.xib */; };
@@ -45,6 +47,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		548867A42BD4515B00E7DA69 /* GraphView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GraphView.swift; sourceTree = "<group>"; };
+		54EABC9B2BCE40F700C56DD0 /* GraphViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GraphViewController.swift; sourceTree = "<group>"; };
 		5A4BD76028741AA0009FA271 /* DetailsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailsViewController.swift; sourceTree = "<group>"; };
 		5A9E218528759CEA00A7ABFC /* TransactionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransactionViewCell.swift; sourceTree = "<group>"; };
 		5A9E218628759CEA00A7ABFC /* TransactionViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = TransactionViewCell.xib; sourceTree = "<group>"; };
@@ -182,6 +186,8 @@
 				5AACE63628731C02009C3151 /* AddTransactionViewController.swift */,
 				5AACE63428731BCC009C3151 /* ProfileViewController.swift */,
 				5A4BD76028741AA0009FA271 /* DetailsViewController.swift */,
+				54EABC9B2BCE40F700C56DD0 /* GraphViewController.swift */,
+				548867A42BD4515B00E7DA69 /* GraphView.swift */,
 			);
 			path = Controllers;
 			sourceTree = "<group>";
@@ -320,9 +326,11 @@
 			files = (
 				5AE70C6A2870DEC300F6110C /* SignUpViewController.swift in Sources */,
 				5AE70C702870DEC300F6110C /* moneyManagementApp.xcdatamodeld in Sources */,
+				54EABC9C2BCE40F700C56DD0 /* GraphViewController.swift in Sources */,
 				5AE70C662870DEC300F6110C /* AppDelegate.swift in Sources */,
 				5A4BD76128741AA0009FA271 /* DetailsViewController.swift in Sources */,
 				5AE70C9B2870EA1500F6110C /* SignInViewController.swift in Sources */,
+				548867A52BD4515B00E7DA69 /* GraphView.swift in Sources */,
 				5AE70C9D2870EA4F00F6110C /* InfoViewController.swift in Sources */,
 				5AE70C9F2870EA6400F6110C /* HomeViewController.swift in Sources */,
 				5A9E218728759CEA00A7ABFC /* TransactionViewCell.swift in Sources */,
