@@ -24,7 +24,15 @@ class HomeViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        let matteBackgroundColor = UIColor(red: 44/255, green: 13/255, blue: 71/255, alpha: 0.9)
+
+        
+        // Set background color
+        view.backgroundColor = matteBackgroundColor
+
         // Define back button for details view controller
+
+        
         let backBarButtonItem = UIBarButtonItem(title: "Back", style: .plain, target: nil, action: nil)
         navigationItem.backBarButtonItem = backBarButtonItem
         
@@ -45,6 +53,10 @@ class HomeViewController: UIViewController {
         transactionTableView.dataSource = self
     
         getData()
+        
+        // Set background color for the table view
+        transactionTableView.backgroundColor = UIColor(red: 44/255, green: 13/255, blue: 71/255, alpha: 1.0)
+            
         
         sumOfExpense()
         sumOfIncome()
@@ -173,8 +185,10 @@ class HomeViewController: UIViewController {
             if results.count > 0 {
                 
                 for result in results as! [NSManagedObject] {
-                    if let amount = result.value(forKey: "amount") as? Float {
+                    if let amount = result.value(forKey: "amount") as? Float,
+                       let category = result.value(forKey: "category") as? String {
                         self.expenseAmount.append(amount)
+                        self.expanseArray.append(category)
                     }
                 }
             }
@@ -191,7 +205,6 @@ class HomeViewController: UIViewController {
         fetchRequest.returnsObjectsAsFaults = false
         
         let filter = "income"
-
         let predicate = NSPredicate(format: "expanse = %@", filter)
         fetchRequest.predicate = predicate
         
@@ -201,8 +214,10 @@ class HomeViewController: UIViewController {
             if results.count > 0 {
                 
                 for result in results as! [NSManagedObject] {
-                    if let amount = result.value(forKey: "amount") as? Float {
+                    if let amount = result.value(forKey: "amount") as? Float,
+                       let category = result.value(forKey: "category") as? String {
                         self.incomeAmount.append(amount)
+                        self.expanseArray.append(category)
                     }
                 }
             }
@@ -218,7 +233,8 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource {
     
     // Define table view's row height
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-           return 44
+        // Add some extra space below the cell
+        return 64 + 10 // Height of the cell + extra space
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -226,33 +242,17 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource {
         return amountArray.count
     }
     
+    // Inside cellForRowAt method
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        
+            
         let cell = Bundle.main.loadNibNamed("TransactionViewCell", owner: self, options: nil)?.first as! TransactionViewCell
 
         cell.categoryLabel?.text = categoryArray[indexPath.row]
-        
-        if expanseArray[indexPath.row] == "expense" {
-            cell.amountLabel.textColor = UIColor.systemRed
-            cell.amountLabel.text = "-\(amountArray[indexPath.row]) $"
-            
-            sumOfExpenses = expenseAmount.reduce(0, {$0 + $1})
-            expenseLabel.text = "-\(sumOfExpenses) $"
-            
-            
-        } else {
-            cell.amountLabel.textColor = UIColor.systemGreen
-            cell.amountLabel.text = "+\(amountArray[indexPath.row]) $"
-            
-            sumOfIncomes = incomeAmount.reduce(0, {$0 + $1})
-            incomeLabel.text = "+\(sumOfIncomes) $"
-           
-        }
-        
-        balanceLabel.text = "\(sumOfIncomes - sumOfExpenses) $"
-        
+        cell.configure(with: expanseArray[indexPath.row], amount: amountArray[indexPath.row])
+
         return cell
     }
+
 
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
