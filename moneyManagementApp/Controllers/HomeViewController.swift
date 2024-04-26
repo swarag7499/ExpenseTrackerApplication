@@ -2,7 +2,7 @@ import UIKit
 import CoreData
 
 class HomeViewController: UIViewController {
-
+    
     @IBOutlet weak var balanceLabel: UILabel!
     @IBOutlet weak var expenseLabel: UILabel!
     @IBOutlet weak var incomeLabel: UILabel!
@@ -25,24 +25,21 @@ class HomeViewController: UIViewController {
         super.viewDidLoad()
         
         let matteBackgroundColor = UIColor(red: 44/255, green: 13/255, blue: 71/255, alpha: 0.9)
-
         
         // Set background color
         view.backgroundColor = matteBackgroundColor
-
-        // Define back button for details view controller
-
         
+        // Define back button for details view controller
         let backBarButtonItem = UIBarButtonItem(title: "Back", style: .plain, target: nil, action: nil)
         navigationItem.backBarButtonItem = backBarButtonItem
         
         // Home page header
         let label = UILabel()
-        label.textColor = UIColor.black
+        label.textColor = UIColor.white
         label.text = "Home"
         label.font = .systemFont(ofSize: 30)
         label.textAlignment = .left
-        self.navigationItem.leftBarButtonItem = UIBarButtonItem.init(customView: label)
+        self.navigationItem.leftBarButtonItem = UIBarButtonItem(customView: label)
         
         // Add pre-created cell to table view
         let cell = UINib(nibName: "TransactionViewCell", bundle: nil)
@@ -51,13 +48,17 @@ class HomeViewController: UIViewController {
         // Must be added for table view usage
         transactionTableView.delegate = self
         transactionTableView.dataSource = self
-    
+        
         getData()
         
         // Set background color for the table view
-        transactionTableView.backgroundColor = UIColor(red: 44/255, green: 13/255, blue: 71/255, alpha: 1.0)
-            
-        
+        view.backgroundColor = matteBackgroundColor
+        view.backgroundColor = UIColor(red: 23/255, green: 63/255, blue: 76/255, alpha: 1.0) // #173f4c
+
+        transactionTableView.backgroundColor = UIColor(red: 23/255, green: 63/255, blue: 76/255, alpha: 1.0) // #173f4c
+
+//        transactionTableView.backgroundColor = UIColor(red: 23/255, green: 63/255, blue: 76/255, alpha: 1.0) // #173f4c
+
         sumOfExpense()
         sumOfIncome()
         
@@ -116,7 +117,6 @@ class HomeViewController: UIViewController {
             print("Error deleting transaction: \(error)")
         }
     }
-
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "toDetailsVC" {
@@ -126,7 +126,7 @@ class HomeViewController: UIViewController {
     }
     
     // Get data from core data
-    @objc func getData(){
+    @objc func getData() {
         
         // So that data is not written twice
         categoryArray.removeAll(keepingCapacity: false)
@@ -139,9 +139,9 @@ class HomeViewController: UIViewController {
         
         let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Transaction")
         fetchRequest.returnsObjectsAsFaults = false // This helps to fetch objects faster
-        
+         
         do {
-            let results =  try context.fetch(fetchRequest)
+            let results = try context.fetch(fetchRequest)
             if results.count > 0 {
                 for result in results as! [NSManagedObject]{
                     if let category = result.value(forKey: "category") as? String {
@@ -233,33 +233,48 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource {
     
     // Define table view's row height
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        // Add some extra space below the cell
         return 64 + 10 // Height of the cell + extra space
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        // Cause it is necessary to enter amount
         return amountArray.count
     }
     
-    // Inside cellForRowAt method
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-            
         let cell = Bundle.main.loadNibNamed("TransactionViewCell", owner: self, options: nil)?.first as! TransactionViewCell
+        
+        cell.backgroundColor = UIColor(red: 23/255, green: 63/255, blue: 76/255, alpha: 1.0) // #173f4c
 
+        cell.categoryLabel?.textColor = UIColor.white
+        cell.amountLabel?.textColor = UIColor.white
+        
         cell.categoryLabel?.text = categoryArray[indexPath.row]
-        cell.configure(with: expanseArray[indexPath.row], amount: amountArray[indexPath.row])
-
+        
+        if expanseArray[indexPath.row] == "expense" {
+            // Set background color for expenses
+            cell.contentView.backgroundColor = UIColor(red: 240/255, green: 61/255, blue: 53/255, alpha: 1.0) // #f03d35
+            cell.amountLabel.text = "-\(amountArray[indexPath.row]) $"
+            
+            sumOfExpenses = expenseAmount.reduce(0, {$0 + $1})
+            expenseLabel.text = "-\(sumOfExpenses) $"
+            
+        } else {
+            // Set background color for income
+            cell.contentView.backgroundColor = UIColor(red: 78/255, green: 217/255, blue: 102/255, alpha: 1.0) // #4ed966
+            cell.amountLabel.text = "+\(amountArray[indexPath.row]) $"
+            
+            sumOfIncomes = incomeAmount.reduce(0, {$0 + $1})
+            incomeLabel.text = "+\(sumOfIncomes) $"
+        }
+        
+        balanceLabel.text = "\(sumOfIncomes - sumOfExpenses) $"
+        
         return cell
     }
 
-
-
+    
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        
         selectedTransactionId = idArray[indexPath.row] ?? ""
-        
         performSegue(withIdentifier: "toDetailsVC", sender: nil)
     }
-    
 }

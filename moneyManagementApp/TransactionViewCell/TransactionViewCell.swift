@@ -8,13 +8,14 @@ class TransactionViewCell: UITableViewCell {
     
     // Padding constants
     let padding: CGFloat = 10 // Padding value
-    let cornerRadius: CGFloat = 12 // Corner radius value
+    let cornerRadius: CGFloat = 25 // Corner radius value
     
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code
         contentView.layer.cornerRadius = cornerRadius
         contentView.layer.masksToBounds = true
+        contentView.backgroundColor = UIColor.black // Change the background color to black
     }
 
     override func setSelected(_ selected: Bool, animated: Bool) {
@@ -23,11 +24,11 @@ class TransactionViewCell: UITableViewCell {
     }
     
     func configure(with transactionType: String, amount: Float) {
+        contentView.backgroundColor = UIColor.systemPink // Change background color to pink
+        
         if transactionType == "expense" {
-            contentView.backgroundColor = UIColor(red: 237/255, green: 9/255, blue: 120/255, alpha: 1.0) // Expense color: #ed0978
             amountLabel.textColor = .white
         } else {
-            contentView.backgroundColor = UIColor(red: 251/255, green: 109/255, blue: 11/255, alpha: 1.0) // Income color: #fb6d0b
             amountLabel.textColor = .white
         }
         

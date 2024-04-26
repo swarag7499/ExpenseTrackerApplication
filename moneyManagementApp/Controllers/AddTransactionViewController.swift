@@ -1,7 +1,7 @@
 import UIKit
 import CoreData
 
-class AddTransactionViewController: UIViewController, UIImagePickerControllerDelegate & UINavigationControllerDelegate {
+class AddTransactionViewController: UIViewController, UIImagePickerControllerDelegate & UINavigationControllerDelegate, UITextFieldDelegate {
     
     @IBOutlet weak var segmentControl: UISegmentedControl!
     @IBOutlet weak var amountTextField: UITextField!
@@ -18,26 +18,64 @@ class AddTransactionViewController: UIViewController, UIImagePickerControllerDel
     
     override func viewDidLoad() {
         super.viewDidLoad()
-    
+
         // These views are invisible at the start
         datePicker.isHidden = true
         imageView.isHidden = true
-        
+
+        // Set font size for input fields
+        let placeholderColor = UIColor(red: 192/255, green: 192/255, blue: 192/255, alpha: 1.0)
+        let attributes: [NSAttributedString.Key: Any] = [
+            .font: UIFont.systemFont(ofSize: 20),
+            .foregroundColor: placeholderColor
+        ]
+
+        amountTextField.font = UIFont.systemFont(ofSize: 20)
+        categoryTextField.font = UIFont.systemFont(ofSize: 20)
+        dateTextField.font = UIFont.systemFont(ofSize: 20)
+        noteTextField.font = UIFont.systemFont(ofSize: 20)
+
+        // Set date picker text color to white
+        datePicker.setValue(UIColor.white, forKey: "textColor")
+
         // Select date from date picker
         pickDate()
-        
+
         // Add photos from library
         attachLabel.isUserInteractionEnabled = true
         let imageTapRecognizer = UITapGestureRecognizer(target: self, action: #selector(selectImage))
         attachLabel.addGestureRecognizer(imageTapRecognizer)
-        
+
         addButton.isEnabled = false // Button not enabled at the start
-        
+
         amountTextField.addTarget(self, action: #selector(checkButtonAvailability), for: .editingChanged)
         categoryTextField.addTarget(self, action: #selector(checkButtonAvailability), for: .editingChanged)
-        
+
         // Income segment does not have image adding option
         segmentControl.addTarget(self, action: #selector(switchSegments), for: .valueChanged)
+
+        // Set placeholder text color to light gray
+        amountTextField.attributedPlaceholder = NSAttributedString(string: "Amount", attributes: attributes)
+        categoryTextField.attributedPlaceholder = NSAttributedString(string: "Category", attributes: attributes)
+        dateTextField.attributedPlaceholder = NSAttributedString(string: "Date", attributes: attributes)
+        noteTextField.attributedPlaceholder = NSAttributedString(string: "Note (optional)", attributes: attributes)
+
+        // Set text field delegates
+        amountTextField.delegate = self
+        categoryTextField.delegate = self
+        dateTextField.delegate = self
+        noteTextField.delegate = self
+        
+        // Set segment control color for selected and unselected segments
+            segmentControl.setTitleTextAttributes([NSAttributedString.Key.foregroundColor: UIColor.black], for: .selected)
+            segmentControl.setTitleTextAttributes([NSAttributedString.Key.foregroundColor: UIColor.white], for: .normal)
+
+    }
+
+
+    // UITextFieldDelegate method to detect text changes
+    func textFieldDidChange(_ textField: UITextField) {
+        textField.textColor = .white
     }
     
     @objc func switchSegments() {
